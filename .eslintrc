@@ -1,0 +1,40 @@
+{
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "sourceType": "module"
+    },
+    "env": {
+        "es6": true,
+        "node": true,
+        "browser": true
+    },
+    "plugins": [
+        "import",
+        "node",
+        "promise",
+        "standard"
+    ],
+    "globals": {
+        "document": false,
+        "navigator": false,
+        "window": false
+    },
+    "extends": "standard",
+    "rules": {
+        "indent": [
+            2,
+            "tab"
+        ],
+        "no-tabs": 0,
+        "semi": [
+            "error",
+            "always",
+            {
+                "omitLastInOneLineBlock": true
+            }
+        ]
+    }
+}
