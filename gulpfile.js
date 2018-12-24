@@ -8,10 +8,11 @@ const del = require('del');
 const browserSync = require('browser-sync').create();
 const htmlmin = require('gulp-htmlmin');
 const imagemin = require('gulp-imagemin');
-const eslint = require('gulp-eslint');
-const babel = require('gulp-babel');
 const uglify = require('gulp-uglify');
 // const criticalCss = require("gulp-critical-css"); ???
+const rename = require('gulp-rename');
+const webpack = require('webpack');
+const webpackStream = require('webpack-stream');
 
 /* Static Server */
 gulp.task('serve', function () {
@@ -71,29 +72,33 @@ gulp.task('sass:build', function () {
 });
 
 /* JAVASCRIPT */
-// dev
-gulp.task('js:dev', function () {
-	return gulp.src('src/index.js')
-		.pipe(eslint()) // ???
-		.pipe(eslint.format()) // ???
-		.pipe(
-			babel({
-				presets: ['@babel/env']
-			})
-		)
-		.pipe(gulp.dest('dist/'));
-});
 
-// build
-gulp.task('js:build', function () {
-	return gulp.src('src/index.js')
-		.pipe(
-			babel({
-				presets: ['@babel/env']
-			})
-		)
+// NEW JS
+gulp.task('js:dev', function () {
+	return gulp.src('./src/index.js')
+		.pipe(webpackStream({
+			output: {
+				filename: 'index.js',
+			},
+			module: {
+				rules: [
+					{
+						test: /\.(js)$/,
+						exclude: /(node_modules)/,
+						loader: 'babel-loader',
+						query: {
+							presets: ['env']
+						}
+					}
+				]
+			},
+			externals: {
+				jquery: 'jQuery'
+			}
+		}))
 		.pipe(uglify())
-		.pipe(gulp.dest('dist/'));
+		.pipe(rename({ suffix: '.min' }))
+		.pipe(gulp.dest('./dist/'));
 });
 
 /* Images */
@@ -136,7 +141,7 @@ gulp.task('copy:fonts', function () {
 gulp.task('watch', function () {
 	gulp.watch('src/**/*.html', gulp.series('copy:html'));
 	gulp.watch('src/**/*.scss', gulp.series('sass'));
-	gulp.watch('src/**/*.js', gulp.series('js'));
+	gulp.watch('src/**/*.js', gulp.series('js:dev'));
 	gulp.watch('src/images/**/*.*', gulp.series('copy:images'));
 	gulp.watch('src/fonts/**/*.*', gulp.series('copy:fonts'));
 });
@@ -166,7 +171,7 @@ gulp.task(
 		gulp.parallel(
 			'static',
 			'sass:build',
-			'js:build',
+			// 'js:build',
 			'minifyHTML',
 			'copy:fonts'
 		)

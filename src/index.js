@@ -1,5 +1,6 @@
 import $ from 'jquery';
 
-$('.box').click(function () {
-	alert('Handler for .click() called.');
+$(document).ready(() => {
+	let str = `window location is ${window.location}`;
+	console.log(str);
 });
