@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "gulp dev",
+    "build": "gulp build",
+    "compress": "gulp compress"
   },
   "author": "Egorov Dmitriy <egorov-by-egorov@mail.ru> (https://github.com/egorov-by-egorov)",
   "license": "ISC",
