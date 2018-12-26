@@ -11,7 +11,7 @@ const imagemin = require('gulp-imagemin');
 const uglify = require('gulp-uglify');
 // const criticalCss = require("gulp-critical-css"); ???
 const rename = require('gulp-rename');
-const webpack = require('webpack');
+// const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
 
 /* Static Server */
@@ -75,11 +75,15 @@ gulp.task('sass:build', function () {
 
 // NEW JS
 gulp.task('js:dev', function () {
-	return gulp.src('./src/index.js')
+	return gulp.src('./src/**/*.js')
 		.pipe(webpackStream({
+			entry: {
+				index: './src/index.js'
+			},
 			output: {
 				filename: 'index.js',
 			},
+			mode: 'development',
 			module: {
 				rules: [
 					{
@@ -87,14 +91,11 @@ gulp.task('js:dev', function () {
 						exclude: /(node_modules)/,
 						loader: 'babel-loader',
 						query: {
-							presets: ['env']
+							presets: ['@babel/env']
 						}
 					}
 				]
 			},
-			externals: {
-				jquery: 'jQuery'
-			}
 		}))
 		.pipe(uglify())
 		.pipe(rename({ suffix: '.min' }))
@@ -140,7 +141,7 @@ gulp.task('copy:fonts', function () {
 /* WATCHER */
 gulp.task('watch', function () {
 	gulp.watch('src/**/*.html', gulp.series('copy:html'));
-	gulp.watch('src/**/*.scss', gulp.series('sass'));
+	gulp.watch('src/**/*.scss', gulp.series('sass:dev'));
 	gulp.watch('src/**/*.js', gulp.series('js:dev'));
 	gulp.watch('src/images/**/*.*', gulp.series('copy:images'));
 	gulp.watch('src/fonts/**/*.*', gulp.series('copy:fonts'));
